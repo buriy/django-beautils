@@ -26,11 +26,16 @@ class DateInput(forms.widgets.Input):
         media = super(DateInput, self).media
 
         media_context = {
-                            'jquery': {
-                                        'css': {'screen': ('/media/css/datePicker.css', )},
-                                        'js': ('/media/js/jquery.js', '/media/js/date.js', '/media/js/jquery.datePicker.js', '/media/js/datePicker.set.js'),
-                                      }
-                        }[self.media_type]
+            'jquery': 
+            {
+                'css': {'screen': ('/media/css/datePicker.css', )},
+                'js': ('/media/js/jquery.js',
+                       '/media/js/date.js',
+                       '/media/js/jquery.datePicker.js',
+                       '/media/js/datePicker.set.js'
+                       ),
+            }
+        }[self.media_type]
 
 
         media.add_js(media_context['js'])
