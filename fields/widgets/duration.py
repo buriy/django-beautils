@@ -16,13 +16,49 @@ class TimeDelta(datetime.timedelta):
         ('ms', 1000),
         ('us', 1),
     ))
+    
+    def from_string(cls, value):
+        if value == '0':
+            return datetime.timedelta.__new__(TimeDelta)
+        
+        pairs = []
+        for b in value.lower().split():
+            for index, char in enumerate(b):
+                if not char.isdigit():
+                    pairs.append((b[:index], b[index:])) #digits, letters
+                    break
+        if not pairs:
+            raise ValueError("Incorrect TimeDelta value")
+    
+        microseconds = 0
+        for digits, chars in pairs:
+            if not digits or not chars:
+                raise ValidationError("Incorrect TimeDelta pair")
+            microseconds += int(digits) * TimeDelta.values_in_microseconds[chars]
+        
+        return datetime.timedelta.__new__(TimeDelta, microseconds=microseconds)
+    
+    from_string = classmethod(from_string)
 
-    def __new__(self, *args, **kw):
-        assert not args, "Can't accept args"
-        usec = kw.get('microseconds')
-        if usec and not isinstance(usec, datetime.timedelta):
-            kw['microseconds'] = float(usec)
-        return datetime.timedelta.__new__(TimeDelta, *args, **kw)
+    def __new__(self, days=0, seconds=0, microseconds=0, value=None):
+        """
+        Creates TimeDelta
+        
+        Use value to cast from other type, or
+        days, seconds, and microseconds for timedelta-like construction
+        """
+        if value != None and (days or seconds or microseconds):
+            raise ValueError("Using value argument with other arguments is prohibited.")
+        if value:
+            if isinstance(value, basestring):
+                return TimeDelta.from_string(value)
+            
+#           if isinstance(value, datetime.timedelta):
+#               microseconds = float(value)
+            
+            microseconds = float(value)
+        
+        return datetime.timedelta.__new__(TimeDelta, days, seconds, microseconds)
 
     def __unicode__(self):
         if not self:
@@ -53,25 +89,10 @@ class DurationField(Field):
          1 year 7 months 6 weeks 3 days 18 hours 30 minutes 23 seconds 10 milliseconds 150 microseconds
          => datetime.timedelta(624, 6155, 805126)
         """
-        if not value or value == '0':
-            return TimeDelta(microseconds=0)
-
-        pairs = []
-        for b in value.lower().split():
-            for index, char in enumerate(b):
-                if not char.isdigit():
-                    pairs.append((b[:index], b[index:])) #digits, letters
-                    break
-        if not pairs:
+        try:
+            return TimeDelta(value=value)
+        except ValueError:
             raise ValidationError(self.error_messages['invalid'])
-
-        microseconds = 0
-        for digits, chars in pairs:
-            if not digits or not chars:
-                raise ValidationError(self.error_messages['invalid'])
-            microseconds += int(digits) * TimeDelta.values_in_microseconds[chars]
-
-        return TimeDelta(microseconds=microseconds)
 
     def from_timedelta(self, value):
         if not value:

@@ -17,7 +17,7 @@ class DurationProxy(object):
 
     def __set__(self, instance, value):
         if value and not isinstance(value, TimeDelta):
-            value = TimeDelta(microseconds=value)
+            value = TimeDelta(value=value)
         instance.__dict__[self.field_name] = value
 
 class DurationField(Field):
@@ -36,16 +36,17 @@ class DurationField(Field):
         if value is None:
             return None
         if not isinstance(value, TimeDelta):
-            value = TimeDelta(value)
+            value = TimeDelta(value=value)
         t = value.days * 24 * 3600 * 1000000 + value.seconds * 1000000 + value.microseconds
-        return connection.ops.value_to_db_decimal(t, 20, 0) # max value 86399999999999999999 microseconds
+        return connection.ops.value_to_db_decimal(t, 20, 0)
+        # max value 86399999999999999999 microseconds
 
     def to_python(self, value):
         if isinstance(value, TimeDelta):
             return value
         try:
-            return TimeDelta(microseconds=float(value))
-        except (TypeError, ValueError):
+            return TimeDelta(value=float(value))
+        except TypeError:
             raise ValidationError('The value must be an integer.')
         except OverflowError:
             raise ValidationError('The maximum allowed value is %s' % TimeDelta.max)
