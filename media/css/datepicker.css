@@ -1,0 +1,17 @@
+.datepicker-image {
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	margin: 0px 3px 5px 3px;
+	vertical-align: middle;
+	display: inline;
+	text-indent: -2000px;
+	overflow: hidden;
+	border: 0px;
+	background: url(../images/calendar.png) no-repeat; 
+	cursor: pointer;	
+}
+.datepicker-image.disabled {
+	background-position: 0 -20px;
+	cursor: default;
+}
