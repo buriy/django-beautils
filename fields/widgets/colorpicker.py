@@ -4,7 +4,6 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.forms.fields import CharField
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _
 import operator
 
 class ColorPickerWidget(TextInput):
@@ -42,19 +41,22 @@ def all(*x):
 class ColorPickerField(CharField):
     widget = ColorPickerWidget
 
-    error_msg = _('A color value should be an empty string or consist of "#" and 6 hex digits')
-
+    default_error_messages = {
+        'hex_error': u'This is an invalid color code. It must be a html hex color code e.g. #000000',
+        'empty_hex_error': u'A color value should be an empty string or consist of "#" and 6 hex digits'
+    }
+    
     def __init__(self, *args, **kwargs):
         super(ColorPickerField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
         super(ColorPickerField, self).clean(value)
         if not value or value == u'None':
-            return 'None'
+            return u''
         hex = '0123456789abcdefABCDEF'
         if len(value) == 7 and value[0]=='#' and all([c in hex for c in value[1:]]):
             return value
-        raise ValidationError(self.error_msg)
+        raise ValidationError(self.error_messages['hex_error'])
 
     def widget_attrs(self, widget):
         return {}

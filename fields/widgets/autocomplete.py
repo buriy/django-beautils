@@ -54,17 +54,15 @@ class AutocompleteWidget(TextInput):
         else:
             self.extra = {}
 
-    def js_files(self, jquery=False):
-        files_list = ['js/jquery.ajaxQueue.js', 'js/jquery.bgiframe.js', 'js/jquery.autocomplete.js']
+    class Media:
+        css = {
+            'screen': ('utils/css/jquery.autocomplete.css',)
+        }
+        js = ('utils/js/jquery-1.3.2.min.js', 
+              'utils/js/jquery-ui-1.7.2.custom.min.js',
+              'utils/js/jquery.autocomplete.js')
 
-        if jquery:
-            files_list.insert(0, 'js/jquery.js')
-
-        for i, f in enumerate(files_list):
-            files_list[i] = os.path.join(settings.MEDIA_URL, f)
-
-        return files_list
-
+        
     def render(self, name, value=None, attrs=None):
         if not self.choices and not self.choices_url:
             raise TypeError('One of "choices" or "choices_url" keyword argument must be supplied obligatory.')

@@ -1,5 +1,5 @@
 from django.db.models.fields import CharField
-from formwidgets.jquery.widgets.colorpicker import ColorPickerField
+from widgets.colorpicker import ColorPickerField
 
 class ColorField(CharField):
     def __init__(self, *args, **kwargs):

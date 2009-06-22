@@ -1,8 +1,8 @@
 from django.forms.models import ModelForm, ModelFormMetaclass
 from django.db.models.fields.related import ForeignKey
 from django import forms
-from formwidgets.jquery.widgets.datepicker import DatePickerWidget
-from formwidgets.jquery.widgets.autocomplete import AutocompleteWidget
+from utils.fields.widgets.datepicker import DatePickerWidget
+from utils.fields.widgets.autocomplete import AutocompleteWidget
 
 class CRUDFormBase(ModelFormMetaclass):
     def __new__(cls, name, bases, attrs):

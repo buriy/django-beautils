@@ -53,16 +53,10 @@ class MulticompleteWidget(TextInput):
         else:
             self.extra = {}
 
-    def js_files(self, jquery=False):
-        files_list = ['js/jquery.ajaxQueue.js', 'js/jquery.bgiframe.js', 'js/jquery.autocomplete.js', 'widgets/mstable/mstable.js']
-
-        if jquery:
-            files_list.insert(0, 'js/jquery.js')
-
-        for i, f in enumerate(files_list):
-            files_list[i] = os.path.join(settings.MEDIA_URL, f)
-
-        return files_list
+    class Media:
+        js = ('utils/js/jquery.autocomplete.js',
+              'utils/js/jquery.multicomplete.js')
+        css = {'screen': ('utils/css/jquery.autocomplete.css',)}
 
     def render(self, name, value=None, attrs=None):
         if not value:
@@ -110,24 +104,24 @@ class MulticompleteWidget(TextInput):
         id = final_attrs['id']
         id_div = id + "_div_element"
         v = simplejson.dumps (value)
-        html_code += u"""
+        MR = settings.MEDIA_URL+'utils/'
+        lines = [html_code,
+u"""
 <div id = "%(id_div)s"></div>
 <script type="text/javascript"><!--
   $(document).ready(function() {
     renderMultistringTable ("%(id_div)s",%(v)s)
   });
 --></script>
-""" % locals ()
-        html_code += super(MulticompleteWidget, self).render(name, self.choice or "", attrs)
-        html_code += u"""
-<img src="/static/icons/add.png" alt="%(v)s" onclick="addToMultistringTable('%(id_div)s',$('#%(id)s').val());"></img>
-""" % locals ()
-        html_code += u"""
-<script type="text/javascript"><!--
+""" % locals (),
+super(MulticompleteWidget, self).render(name, self.choice or "", attrs),
+u"""<img src='"""+ MR + u"""images/add.png' alt="%(v)s" onclick="addToMultistringTable('%(id_div)s',$('#%(id)s').val());"></img>""" % locals (),
+u"""<script type="text/javascript"><!--
     %s$('#%s').autocomplete(%s%s);
 --></script>
 """ % (extra, id, choices, options)
-        return mark_safe(html_code)
+        ]
+        return mark_safe('\n'.join(lines))
 
     def set_current_choice(self, data):
         if not self.choices:

@@ -1,3 +1,4 @@
+from django.utils.simplejson.encoder import JSONEncoder
 try:
     from django import newforms as forms
 except ImportError:
@@ -5,50 +6,40 @@ except ImportError:
 
 import datetime
 
-class DateInput(forms.widgets.Input):
-    media_type = 'jquery'
-    input_type = 'text'
-    def __init__(self, *a, **kw):
-        super(DateInput, self).__init__(*a, **kw)
+def js(code):
+    return """<script type="text/javascript"><!--
+      $(document).ready(function() { """+code+""" });
+    --></script>"""
 
+class DateInput(forms.TextInput):
+    class Media:
+        css = {
+            'screen': ('utils/css/datepicker.css',)
+        }
+        js = ('utils/js/jquery-1.3.2.min.js', 
+              'utils/js/jquery-ui-1.7.2.custom.min.js')
 
-    def render(self, name, value, attrs={}):
-        b = []
-        if 'class' in attrs:
-            b = attrs['class'].split(' ')
+    def __init__(self, options={'dateFormat': 'yy-mm-dd'}, attrs={}):
+        self.options = JSONEncoder().encode(options)
+        self.attrs = attrs
+ 
+    def render_image(self, field_id):
+        return u"<img class='datepicker-image' onclick=\"$('#%s').datepicker('show')\">" % field_id
+ 
+    def render_js(self, field_id):
+        return u'''<script type="text/javascript">
+        $('#%s').datepicker(%s);</script>''' % (field_id, self.options)
+ 
+    def render(self, name, value=None, attrs=None):
+        klasses = attrs.get('class', '').split(' ')
+        attrs['class'] = ' '.join(klasses + ['datepicker'])
+        attrs['name'] = name
+        id = attrs['id'] 
+        
+        r = super(DateInput, self).render(name, value, attrs)
+        return r + self.render_image(id) + self.render_js(id)
 
-        b.append('date-pick')
-
-        attrs.update({'class': ' '.join(b)})
-        return super(DateInput, self).render(name, value, attrs)
-
-    def _media(self):
-        media = super(DateInput, self).media
-
-        media_context = {
-            'jquery': 
-            {
-                'css': {'screen': ('/media/css/datePicker.css', )},
-                'js': ('/media/js/jquery.js',
-                       '/media/js/date.js',
-                       '/media/js/jquery.datePicker.js',
-                       '/media/js/datePicker.set.js'
-                       ),
-            }
-        }[self.media_type]
-
-
-        media.add_js(media_context['js'])
-        media.add_css(media_context['css'])
-
-        return media
-    media = property(_media)
-
-try:
-    from django.newforms.widgets import Widget, Select
-except ImportError:
-    from django.forms.widgets import Widget, Select
-
+from django.forms.widgets import Select
 from django.utils.dates import MONTHS
 
 
