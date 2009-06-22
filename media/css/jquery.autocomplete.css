@@ -1,3 +1,7 @@
+.ac_input {
+    clear: both; 
+}
+
 .ac_results {
 	padding: 0px;
 	border: 1px solid WindowFrame;
