@@ -12,7 +12,7 @@ from django.template.loader import find_template_source
 from django.template import TemplateDoesNotExist
 from django.db.models.fields import AutoField
 from utils.timer import log_exception
-from core.models import AttributeLogEntry
+from history.models import AttributeLogEntry
 import traceback
 import re
 import logging

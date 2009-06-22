@@ -1,5 +1,4 @@
 #save as useradmin.py
-from common.models import AttributeLogEntry
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
 from django.contrib.admin.options import ModelAdmin
@@ -8,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from utils.html import link
+from utils.history.models import AttributeLogEntry
 
 def roles(self):
     #short_name = unicode # function to get group name
