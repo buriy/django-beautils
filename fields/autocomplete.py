@@ -65,7 +65,6 @@ function liFormat_%(name)s (row, i, num) {
     return result;
 }
 function selectItem_%(name)s(li) {
-    alert("selectItem_%(name)s" + li);
     if( li == null ) var sValue = '';
     if( !!li.extra ) var sValue = li.extra[0];
     else var sValue = li.selectValue;
@@ -125,7 +124,8 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
         self.rel = rel
         self.search_fields = search_fields
         super(ManyToManySearchInput, self).__init__(attrs)
-        self.help_text = u"Two symbols to search"
+        self.help_text = ''
+        #self.help_text = u"Two symbols to search"
 
     def render(self, name, value, attrs=None):
         if attrs is None:
@@ -174,7 +174,6 @@ $(document).ready(function(){
         return result;
     }
     function selectItem_%(name)s(li) {
-        alert("selectItem_%(name)s");
         if( li == null ) return
 
         // --- create new element ---
