@@ -150,7 +150,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
         
         return mark_safe(u'''
 <input type="text" id="lookup_%(name)s" value="" size="40"/>%(label)s
-<div style="float:left; padding-left:105px; width:700px;">
+<div class="ac_chosen" style="padding-left:105px; width:1000px;">
 <font style="color:#999999;font-size:10px !important;">%(help_text)s</font>
 <div id="box_%(name)s" style="padding-left:20px;cursor:pointer;">
 
