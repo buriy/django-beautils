@@ -48,8 +48,8 @@ def get_admin_class_url(model):
 def fieldlist(model, exclude=['id']):
     return [x.name for x in model._meta.fields if not x.name in exclude]
 
-def reg_simple(model, exclude=['id'], include=[], **kwargs):
-    class admin(ModelAdmin):
+def reg_simple(model, klass=ModelAdmin, exclude=['id'], include=[], **kwargs):
+    class admin(klass):
         list_display = fieldlist(model, exclude) + include
     
     for k,v in kwargs.iteritems():
