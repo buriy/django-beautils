@@ -278,10 +278,11 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
         return HttpResponseNotFound()
 
     def formfield_for_dbfield(self, db_field, request=None, **kwargs):
+        related_search_fields = getattr(self, 'related_search_fields', {})
         # For ForeignKey use a special Autocomplete widget.
-        if isinstance(db_field, models.ForeignKey) and db_field.name in self.related_search_fields:
+        if isinstance(db_field, models.ForeignKey) and db_field.name in related_search_fields:
             kwargs['widget'] = ForeignKeySearchInput(db_field.rel,
-                                    self.related_search_fields[db_field.name])
+                                    related_search_fields[db_field.name])
 
             # extra HTML to the end of the rendered output.
             formfield = db_field.formfield(**kwargs)
@@ -294,9 +295,9 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
             return formfield
                     
         # For ManyToManyField use a special Autocomplete widget.
-        if isinstance(db_field, models.ManyToManyField)and db_field.name in self.related_search_fields:
+        if isinstance(db_field, models.ManyToManyField)and db_field.name in related_search_fields:
             kwargs['widget'] = ManyToManySearchInput(db_field.rel,
-                                    self.related_search_fields[db_field.name])
+                                    related_search_fields[db_field.name])
             db_field.help_text = ''
 
             # extra HTML to the end of the rendered output.
