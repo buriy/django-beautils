@@ -27,41 +27,6 @@ class TupleCounter(dict):
             value = self.nuple(*value)
         dict.__setitem__(self, key, value)
 
-def first(generator, default=None):
-    for data in generator:
-        return data
-    return default
-
-def head(generator, count=10):
-    list = []
-    for data in generator:
-        list.append(data)
-        if len(list) >= count:
-            break
-    return list
-
-def filtered(source, names):
-    return [source.get(name, 0) for name in names]
-
-def regroup(pairs, size=1):
-    group_dict = {}
-    last = None
-    for item, value in pairs:
-        group = item[:-size]
-        if size == 1:
-            key = item[-1]
-        else:
-            key = item[-size:]
-        if last is None:
-            last = group
-        elif last != group:
-            yield last, group_dict
-            last = group
-            group_dict = {}
-        group_dict[key] = value
-    if group_dict:
-        yield last, group_dict
-
 class IntCounter(dict):
     def __init__(self, pairs={}):
         if hasattr(pairs, 'items'):
