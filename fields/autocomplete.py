@@ -38,6 +38,7 @@ class ForeignKeySearchInput(forms.HiddenInput):
     def __init__(self, rel, search_fields, attrs=None):
         self.rel = rel
         self.search_fields = search_fields
+	self.search_path = '../search/'
         super(ForeignKeySearchInput, self).__init__(attrs)
 
     def render(self, name, value, attrs=None):
@@ -72,7 +73,7 @@ function selectItem_%(name)s(li) {
 }
 
 // --- Autocomplete ---
-$("#lookup_%(name)s").autocomplete("../search/", {
+$("#lookup_%(name)s").autocomplete('%(search_path)', {
         extraParams: {
         search_fields: '%(search_fields)s',
         app_label: '%(app_label)s',
@@ -94,6 +95,7 @@ $("#lookup_%(name)s").autocomplete("../search/", {
 </script>
 
         ''') % {
+	    'search_path': self.search_path,
             'search_fields': ','.join(self.search_fields),
             'MEDIA_URL': settings.MEDIA_URL,
             'model_name': self.rel.to._meta.module_name,
