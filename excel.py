@@ -24,38 +24,17 @@ def parse_excel_date(d, formats = DATE_FORMATS):
 def format_excel_date(d):
     return d.strptime('%Y-%m-%d') # ISO
 
-def import_csv(fn, morqs, keys, strings={}, dates={}, overrides={}, post_process=None, verbose=True, save=True):
-    added = []
-    qs = get_queryset(morqs)
-    M = qs.model
-    for row in csv.DictReader(open(fn, 'r')):
-        data_key = [(k, v) for k,v in strings.items() if v in keys]
-        try:
-            if not qs.filter(**keys).count():
-                raise SkipLine() # ability to short-circuit skip row
-            e = M()
-            for k, v in strings.items():
-                setattr(e, v, row[k].decode('latin1'))
-            for k, v in dates.items():
-                setattr(e, v, parse_excel_date(row[k]))
-            for k, func in overrides.items():
-                value = func
-                if callable(func):
-                    value = func(e, k)
-                setattr(e, k, value)
-            if post_process:
-                post_process(e)
-            if save:
-                e.save()
-            added.append(e)
-            if verbose: print "Saved", repr(data_key)
-        except SkipLine, e:
-            if verbose: print "Skipped", repr(data_key)
-            continue
-        except SkipFile, e:
-            if verbose: print "Terminated by", repr(data_key)
-            break
-    return added
+def parse_string(s):
+    try:
+        return s.decode('utf-8')
+    except UnicodeDecodeError:
+        return s.decode('latin1')
+
+def parse_number(s):
+    try:
+        return int(s)
+    except ValueError:
+        return float(s)
 
 def export_csv(stream, morqs, strings, dates={}, overrides={}):
     w = csv.writer(stream)
