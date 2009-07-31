@@ -6,11 +6,18 @@ def seq_uniq(S):
      return r
 
 def seq_first(S, default=None):
+    """
+    xrange(20) => 0
+    xrange(0) => None
+    """
     for data in S:
         return data
     return default
 
 def seq_limit(S, count=10):
+    """
+    xrange(20), count=10 => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    """
     list = []
     for data in S:
         list.append(data)
@@ -26,7 +33,7 @@ def select_keys(D, keys, defaults={}, superdefault=None):
 
 def regroup_tails(pairs, tailsize=1):
     """
-    ((k1, k2, k3, kN) -> v) => (k1, k2, k3, {kN -> v})
+    ((k1, k2, k3, kN) -> v) => ((k1, k2, k3), {kN -> v})
     """
     group_dict = {}
     last = None
