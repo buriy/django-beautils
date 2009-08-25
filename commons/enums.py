@@ -5,4 +5,4 @@ class Enum(Static):
         self.choices = []
         for name, attr in attrs.iteritems():
             self.choices.append((name, attr))
-            self._add_to_class_(name, attr)
+            self._add_to_class_(name, name)
