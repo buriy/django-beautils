@@ -1,7 +1,7 @@
-from django.utils.datastructures import SortedDict
-from fragments.bparser import get_blocks
-from fragments.arrays import parse_list
+from arrays import parse_list
+from bparser import get_blocks
 from django.template import TemplateSyntaxError
+from django.utils.datastructures import SortedDict
 import re
 
 DEBUG = False

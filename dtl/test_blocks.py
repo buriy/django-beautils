@@ -1,7 +1,7 @@
-from fragments.blocks import make_source
-from fragments.bparser import get_blocks_and_errors
-from fragments.views import render_test
-from fragments.test_admin import test_create_with_admin
+from blocks import make_source
+from bparser import get_blocks_and_errors
+from test_admin import test_create_with_admin
+from views import render_test
 import assets #@UnusedImport
 import utils #@UnusedImport
 

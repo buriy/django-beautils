@@ -1,3 +1,5 @@
+from arrays import pass_array
+from assets.tags import ImageNode
 from django.template import VariableNode, TOKEN_BLOCK, TOKEN_COMMENT, TOKEN_TEXT, \
     TOKEN_VAR, StringOrigin
 from django.template.context import Context
@@ -6,13 +8,11 @@ from django.template.defaulttags import ForNode, IfNode, IfEqualNode
 from django.template.loader_tags import ExtendsNode, BlockNode
 from django.utils.datastructures import SortedDict
 from fragments import set_n_extends
-from fragments.set_n_extends import SetBlockNode, SetNode, HideNode
-from fragments.variables import BlockVar, SimpleVar
-from links.tags import SectionNode, LinkNode
-from utils.tags import SwitchNode
-from fragments.arrays import pass_array
-from assets.tags import ImageNode
 from links.sectionloop import SectionLoopNode
+from links.tags import SectionNode, LinkNode
+from set_n_extends import SetBlockNode, SetNode, HideNode
+from utils.tags import SwitchNode
+from variables import BlockVar, SimpleVar
 
 def parse_opener(parser, cmd, token):
     if cmd == 'set':

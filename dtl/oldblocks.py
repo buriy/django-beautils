@@ -1,12 +1,8 @@
-from django.template import Lexer
-from django.template import TOKEN_BLOCK
-from django.template import TOKEN_COMMENT
-from django.template import TOKEN_TEXT
+from arrays import is_array, parse_array
+from django.template import Lexer, TOKEN_BLOCK, TOKEN_COMMENT, TOKEN_TEXT
 from django.template import TOKEN_VAR
 from django.utils.datastructures import SortedDict
-from fragments.variables import SimpleVar
-from fragments.variables import BlockVar
-from fragments.arrays import is_array, parse_array
+from variables import BlockVar, SimpleVar
 
 def parse(nodes, blocks, source, vars, ignores, comments, stop=None, parent=None):
     #x = re.findall("\{%\s*block\s*([\w-]+)\s*%\}(.*?)\{%\s*endblock\s*%\}", template, re.S)
