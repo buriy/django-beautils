@@ -1,4 +1,5 @@
 from utils.commons.namedtuple import namedtuple
+from utils.commons.func import select_keys
 
 def qs_filter(morqs, **filters):
     """
@@ -11,6 +12,7 @@ def qs_filter(morqs, **filters):
     if hasattr(morqs, 'model'):
         qs = morqs
     else:
+        #TODO: change to objects.get_queryset() ?
         qs = morqs.objects.all()
     if filters:
         return qs.filter(**filters)
@@ -29,6 +31,9 @@ def as_dict(qs, col_key, col_value):
 
 def as_map(qs, key):
     return dict([(getattr(x, key), x) for x in qs])
+
+def as_tuplemap(qs, keys):
+    return dict([(select_keys(x.__dict__, keys), x) for x in qs])
 
 ### ValueQuerySet utility functions
 def as_map_tuples(vqs, key):
