@@ -1,4 +1,12 @@
 #source: http://www.djangosnippets.org/snippets/1697/
+
+# INSTALL NOTES:
+# Register the action in your apps admin.py:
+# 
+# from beautils.actions import export_as_csv
+# class MyAdmin(admin.ModelAdmin):
+#     actions = [export_as_csv]
+#     
 import csv
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
