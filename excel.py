@@ -1,7 +1,7 @@
-from utils.queries import get_queryset
+from utils.queries import qs_filter
 from utils.commons.func import seq_uniq
 from utils.commons.strings import force_quote, quote
-from utils.commons.skipper import SkipLine, SkipFile
+from utils.commons.skippers import SkipLine, SkipFile
 import csv
 
 DATE_FORMATS = ['%d-%b-%y', '%m/%d/%y', '%m/%d/%Y', '%d %B %Y']
@@ -38,7 +38,7 @@ def parse_number(s):
 
 def export_csv(stream, morqs, strings, dates={}, overrides={}):
     w = csv.writer(stream)
-    qs = get_queryset(morqs)
+    qs = qs_filter(morqs)
     field_names = seq_uniq(strings.keys() + dates.keys() + overrides.keys())
     w.write(map(force_quote, field_names))
     for row in qs:

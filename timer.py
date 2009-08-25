@@ -8,8 +8,8 @@ import os
 try:
     import settings
 except:
-    class Settings: pass
-    settings = Settings()
+    class TimerSettings: pass
+    settings = TimerSettings()
     settings.LOG_FILENAME = 'log'
 
 #you should set it to empty string if you don't want to run basicConfig

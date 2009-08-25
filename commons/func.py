@@ -1,9 +1,9 @@
 def seq_uniq(S):
-     r = []
-     for item in S:
-         if not item in r:
-             r.append(item)
-     return r
+    r = []
+    for item in S:
+        if not item in r:
+            r.append(item)
+    return r
 
 def seq_first(S, default=None):
     """
@@ -27,9 +27,9 @@ def seq_limit(S, count=10):
 
 def select_keys(D, keys, defaults={}, superdefault=None):
     """
-    {a=1, b=2, c=3}, (a,c) => [1, 3]
+    {a=1, b=2, c=3}, (a,c) => (1, 3)
     """
-    return [D.get(key, defaults.get(key, superdefault)) for key in keys]
+    return tuple([D.get(key, defaults.get(key, superdefault)) for key in keys])
 
 def regroup_tails(pairs, tailsize=1):
     """

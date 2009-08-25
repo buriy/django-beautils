@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.contrib.admin import site
 from django.contrib.admin.util import quote
-import admin_auth
+import admin_auth #@UnusedImport
 
 def new_render(self, name, value, *args, **kwargs):
     rel_to = self.rel.to
