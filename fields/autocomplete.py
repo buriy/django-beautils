@@ -38,7 +38,7 @@ class ForeignKeySearchInput(forms.HiddenInput):
     def __init__(self, rel, search_fields, attrs=None):
         self.rel = rel
         self.search_fields = search_fields
-	self.search_path = '../search/'
+        self.search_path = '../search/'
         super(ForeignKeySearchInput, self).__init__(attrs)
 
     def render(self, name, value, attrs=None):
@@ -73,7 +73,7 @@ function selectItem_%(name)s(li) {
 }
 
 // --- Autocomplete ---
-$("#lookup_%(name)s").autocomplete('%(search_path)', {
+$("#lookup_%(name)s").autocomplete('%(search_path)s', {
         extraParams: {
         search_fields: '%(search_fields)s',
         app_label: '%(app_label)s',
@@ -95,8 +95,8 @@ $("#lookup_%(name)s").autocomplete('%(search_path)', {
 </script>
 
         ''') % {
-	    'search_path': self.search_path,
             'search_fields': ','.join(self.search_fields),
+	        'search_path': self.search_path,
             'MEDIA_URL': settings.MEDIA_URL,
             'model_name': self.rel.to._meta.module_name,
             'app_label': self.rel.to._meta.app_label,
@@ -125,6 +125,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
     def __init__(self, rel, search_fields, attrs=None):
         self.rel = rel
         self.search_fields = search_fields
+        self.search_path = '../search/'
         super(ManyToManySearchInput, self).__init__(attrs)
         self.help_text = ''
         #self.help_text = u"Two symbols to search"
@@ -152,7 +153,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
         
         return mark_safe(u'''
 <input type="text" id="lookup_%(name)s" value="" size="40"/>%(label)s
-<div class="ac_chosen" style="padding-left:105px; width:1000px;">
+<div class="ac_chosen" style="padding-left:105px; width: 100%%">
 <font style="color:#999999;font-size:10px !important;">%(help_text)s</font>
 <div id="box_%(name)s" style="padding-left:20px;cursor:pointer;">
 
@@ -161,16 +162,18 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 
 <script type="text/javascript">
 
+
 function addItem_id_%(name)s(id,name) {
     // --- add element from popup ---
     $('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+id+'"/>'+name+'</div>')
     .click(function () {$(this).remove();})
     .appendTo("#box_%(name)s");
-
     $("#lookup_%(name)s").val( '' );
 }
 
 $(document).ready(function(){
+    $('#add_id_%(name)s').css("padding-left:105px;");
+    
     function liFormat_%(name)s (row, i, num) {
         var result = row[0] ;
         return result;
@@ -185,10 +188,13 @@ $(document).ready(function(){
 
         $("#lookup_%(name)s").val( '' );
     }
-        
+
+    // alert("#add_id_%(name)s");
+    // alert($("#add_id_%(name)s"));
+
     // --- Autocomplete ---
-    $("#lookup_%(name)s").autocomplete("../search/", {
-            extraParams: {
+    $("#lookup_%(name)s").autocomplete('%(search_path)s', {
+        extraParams: {
             search_fields: '%(search_fields)s',
             app_label: '%(app_label)s',
             model_name: '%(model_name)s',
@@ -211,6 +217,7 @@ $(document).ready(function(){
 
         ''') % {
             'search_fields': ','.join(self.search_fields),
+            'search_path': self.search_path,
             'model_name': self.rel.to._meta.module_name,
             'app_label': self.rel.to._meta.app_label,
             'label': label,
