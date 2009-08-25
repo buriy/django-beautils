@@ -60,11 +60,14 @@ class TimeDelta(datetime.timedelta):
         
         return datetime.timedelta.__new__(TimeDelta, days, seconds, microseconds)
 
+    def to_microseconds(self):
+        return (self.days * 24 * 3600 + self.seconds) * 1000000 + self.microseconds
+
     def __unicode__(self):
         if not self:
             return u"0"
         vals = []
-        mis = self.days * 24 * 3600 * 1000000 + self.seconds * 1000000 + self.microseconds
+        mis = self.to_microseconds()
         for k in self.values_in_microseconds:
             if mis >= self.values_in_microseconds[k]:
                 diff, mis = divmod(mis, self.values_in_microseconds[k])

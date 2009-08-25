@@ -37,9 +37,9 @@ class DurationField(Field):
             return None
         if not isinstance(value, TimeDelta):
             value = TimeDelta(value=value)
-        t = value.days * 24 * 3600 * 1000000 + value.seconds * 1000000 + value.microseconds
-        return connection.ops.value_to_db_decimal(t, 20, 0)
-        # max value 86399999999999999999 microseconds
+        # max value 86,399,999,999,999,999,999 microseconds
+        # that is 1,000,000,000 days, a bit more than 2,739,000 years
+        return connection.ops.value_to_db_decimal(value.to_microseconds(), 20, 0)
 
     def to_python(self, value):
         if isinstance(value, TimeDelta):
