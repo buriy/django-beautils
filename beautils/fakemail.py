@@ -4,7 +4,7 @@ class BogusSMTPConnection(object):
     _console = True
     """Instead of sending emails, print them to the console."""
 
-    def __init__(*args, **kwargs):
+    def __init__(self, *args, **kwargs):
         print "Initialized bogus SMTP connection"
 
     def open(self):
