@@ -1,6 +1,7 @@
 #save into anyapp/management/commands/makefixture.py
 #or back into django/core/management/commands/makefixture.py
-#v0.1 -- current version
+#v0.1 -- initial version
+#v0.2 -- limit option appeared,  
 #known issues:
 #no support for generic relations 
 #no support for one-to-one relations
@@ -29,11 +30,14 @@ class Command(LabelCommand):
             help='Specifies the output serialization format for fixtures.'),
         make_option('--indent', default=None, dest='indent', type='int',
             help='Specifies the indent level to use when pretty-printing output'),
+        make_option('--limit', default=None, dest='limit', type='int',
+            help='Specifies the number of instances of each model taken (largest ids if negative)'),
     )
     
     def handle_models(self, models, **options):
-        format = options.get('format','json')
-        indent = options.get('indent',None)
+        format = options.get('format', 'json')
+        indent = options.get('indent', None)
+        limit = options.get('limit', 0)
         show_traceback = options.get('traceback', False)
         propagate = options.get('propagate', True)
         
@@ -57,27 +61,43 @@ class Command(LabelCommand):
                     items = items.filter(pk__gte=slice[0])
                 if slice and slice[1]:
                     items = items.filter(pk__lt=slice[1])
-                items = items.order_by(model._meta.pk.attname)
+                if limit > 0:
+                    items = items.order_by(model._meta.pk.attname)
+                    items = items[:limit]
+                elif limit < 0:
+                    items = items.order_by('-'+model._meta.pk.attname)
+                    items = list(items[:-limit])
+                    items.reverse()
+                else:
+                    items = items.order_by(model._meta.pk.attname)
                 objects.extend(items)
             else:
                 raise CommandError("Wrong slice: %s" % slice)
-        
+
         all = objects
         if propagate:
+            counts = {}
+            for x in all:
+                counts[x.__class__] = counts.get(x.__class__, 0) + 1
             collected = set([(x.__class__, x.pk) for x in all]) 
             while objects:
                 related = []
                 for x in objects:
                     if DEBUG:
                         print "Adding %s[%s]" % (model_name(x), x.pk)
-                    for f in x.__class__._meta.fields + x.__class__._meta.many_to_many:
+                    opts = x.__class__._meta
+                    for f in opts.fields + opts.many_to_many:
                         if isinstance(f, ForeignKey):
                             new = getattr(x, f.name) # instantiate object
+                            if limit and counts[new.__class__] >= limit:
+                                continue
                             if new and not (new.__class__, new.pk) in collected:
                                 collected.add((new.__class__, new.pk))
                                 related.append(new)
                         if isinstance(f, ManyToManyField):
                             for new in getattr(x, f.name).all():
+                                if limit and counts[new.__class__] >= limit:
+                                    continue
                                 if new and not (new.__class__, new.pk) in collected:
                                     collected.add((new.__class__, new.pk))
                                     related.append(new)
@@ -98,6 +118,14 @@ class Command(LabelCommand):
         parsed = []
         for label in labels:
             search, pks = label, ''
+            if search.endswith('.*'): # match by appname
+                search = search[:-1]
+                models = [model for model, name in self.get_models() 
+                                if name.startswith(search)]
+                if not models:
+                    raise CommandError("Wrong model or model pattern: %s" % search)
+                parsed.extend([(model, '') for model in models])
+                continue
             if '[' in label:
                 search, pks = label.split('[', 1)
             slice = ''
@@ -105,13 +133,14 @@ class Command(LabelCommand):
                 slice = pks.rstrip(']').split(':', 1)
             elif pks: 
                 slice = pks.rstrip(']')
-            models = [model for model, name in self.get_models() 
-                            if name.endswith('.'+search) or name == search]
-            if not models:
-                raise CommandError("Wrong model: %s" % search)
-            if len(models)>1:
-                raise CommandError("Ambiguous model name: %s" % search)
-            parsed.append((models[0], slice))
+            else: # match by exact name or dot + model name
+                models = [model for model, name in self.get_models() 
+                                if name.endswith('.'+search) or name == search]
+                if len(models)>1:
+                    raise CommandError("Ambiguous model name: %s" % search)
+                if not models:
+                    raise CommandError("Wrong model or model pattern: %s" % search)
+                parsed.append((models[0], slice))
         return self.handle_models(parsed, **options)
 
     def list_models(self):

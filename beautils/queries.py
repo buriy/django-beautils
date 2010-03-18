@@ -1,5 +1,5 @@
-from utils.commons.namedtuple import namedtuple
-from utils.commons.func import select_keys
+from lang.namedtuple import namedtuple
+from lang.func import select_keys
 
 def qs_filter(morqs, **filters):
     """
@@ -25,6 +25,9 @@ def as_list(qs, col):
 
 def as_set(qs, col):
     return set(as_list(qs, col))
+
+def in_bulk(qs):
+    return as_set(qs, 'id')
 
 def as_dict(qs, col_key, col_value):
     return dict([(x[col_key], x[col_value]) for x in qs.values(col_key, col_value)])
