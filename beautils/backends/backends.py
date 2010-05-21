@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
-from django.forms.fields import email_re
+from django.core.validators import email_re
 
 class EmailBackend(ModelBackend):
     def authenticate(self, username = None, password = None):

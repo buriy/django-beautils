@@ -1,7 +1,7 @@
-from utils.queries import qs_filter
-from utils.commons.func import seq_uniq
-from utils.commons.strings import force_quote, quote
-from utils.commons.skippers import SkipLine, SkipFile
+from queries import qs_filter
+from lang.func import seq_uniq
+from lang.strings import force_quote, quote
+from lang.skippers import SkipLine, SkipFile
 import csv
 
 DATE_FORMATS = ['%d-%b-%y', '%m/%d/%y', '%m/%d/%Y', '%d %B %Y']

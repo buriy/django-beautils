@@ -130,14 +130,14 @@ class ModelWithHistory(models.Model):
             user = User.objects.get(pk=0) # feature: User with pk=0 supposed to be anonymous user
         else:
             user = threadlocals.get_current_user()
-        from common.models import AttributeLogEntry
-        history = AttributeLogEntry(user=user, object_id = self.pk, field_name=name, log_entry = log_entry,
+        from models import AttributeLogEntry
+        story = AttributeLogEntry(user=user, object_id = self.pk, field_name=name, log_entry = log_entry,
                             field_value = value, content_type = ContentType.objects.get_for_model(self))
         try:
-            history.object_repr = repr(self)
+            story.object_repr = repr(self)
         except Exception:
-            history.object_repr = "(unknown)"
-        history.save()
+            story.object_repr = "(unknown)"
+        story.save()
 
     def get_history(self):
         content_type = ContentType.objects.get_for_model(self)
@@ -147,11 +147,11 @@ class ModelWithHistory(models.Model):
         return bool(self.__class__._history.get('model', False)) 
         
     def last_edited_at(self):
-        history = list(self.get_history()[:1])
-        if not history:
+        story = list(self.get_history()[:1])
+        if not story:
             return datetime.datetime(2000, 1, 1, 0, 0, 0)
         else:
-            return strftime(history[0].action_time, "%Y-%m-%d %H:%M")
+            return strftime(story[0].action_time, "%Y-%m-%d %H:%M")
         
     def last_edited_by(self):
         history = list(self.get_history()[:1])

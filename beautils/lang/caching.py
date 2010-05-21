@@ -1,5 +1,8 @@
 import cPickle as pickle
-import md5
+try:
+    from hashlib import md5 as md5_new #@UnusedImport
+except:
+    from md5 import md5 as md5_new #@Reimport
 
 def cache_function(length):
     """
@@ -25,7 +28,7 @@ def cache_function(length):
             
             raw = [func.__name__, func.__module__, args, kwargs]
             pickled = pickle.dumps(raw, protocol=pickle.HIGHEST_PROTOCOL)
-            key = md5.new(pickled).hexdigest()
+            key = md5_new(pickled).hexdigest()
             value = cache.get(key)
             if cache.has_key(key):
                 return value
