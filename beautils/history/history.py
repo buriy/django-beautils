@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from middleware import threadlocals
+from beautils.middleware import threadlocals
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.models import ADDITION, LogEntryManager
 from django.contrib.admin.models import CHANGE

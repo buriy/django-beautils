@@ -35,7 +35,7 @@ def json_response(data, check=False):
     encode = settings.DEFAULT_CHARSET
     if check:
         if not is_ajax_data(data):
-            raise SimpleAjaxException, 'Return data should be follow the Simple Ajax Data Format'
+            raise SimpleAjaxException, 'Return data should follow the Simple Ajax Data Format'
     return HttpResponse(simplejson.dumps(uni_str(data, encode)), 'text/json')
 
 def ajax_data(response_code, data=None, error=None, next=None, message=None):
