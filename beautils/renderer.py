@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.functional import wraps
-from django.utils.http import urlquote
+from django.utils.http import urlquote, urlencode
 
 import urllib
 from django.core.mail import send_mail
@@ -101,7 +101,7 @@ def get_next_url(request, location='', default=settings.LOGIN_REDIRECT_URL):
     if next.split('?', 1)[0] == default and len(next.split('?'))>1:
         next = next.split('?', 1)[1]
     else:
-        next = urllib.urlencode({'next':next})
+        next = urlencode({'next':next})
     if '?' in location:
         return location + '&' + next
     else:
@@ -119,7 +119,7 @@ def redirect(request, page=None, **kw):
             kw[NEXT] = next
     return HttpResponseRedirect("%s?%s" % (
             request.build_absolute_uri(reverse(page)),
-            urllib.urlencode(kw)
+            urlencode(kw)
     ))
 
 def require_login(request):
