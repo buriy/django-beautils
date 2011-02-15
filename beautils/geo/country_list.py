@@ -1,5 +1,5 @@
 COUNTRIES_LIST = (
-  ('AF','Afghanistan '),
+  ('AF','Afghanistan'),
   ('AL','Albania'),
   ('DZ','Algeria'),
   ('AS','American Samoa'),
