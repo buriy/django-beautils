@@ -36,6 +36,7 @@ class Counter(object):
             if not self.counter % self.steps and self.counter:
                 self.dot()
         self.counter += 1
+        return self.counter
 
     def __del__(self):
         if self.counter and self.console:
